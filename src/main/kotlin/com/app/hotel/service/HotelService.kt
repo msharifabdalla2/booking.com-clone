@@ -35,11 +35,20 @@ class HotelService(
         return hotelRepository.save(newHotel)
     }
 
-    fun getHotelById(id: UUID) : Hotel? = hotelRepository.findByIdOrNull(id)
+    fun getHotelById(id: UUID) : Hotel {
+         return hotelRepository.findByIdOrNull(id)
+             ?: throw NoSuchElementException("Hotel not found: $id")
+    }
 
-    fun getAllHotels(): List<Hotel>? = hotelRepository.findAll()
+    fun getAllHotels(): List<Hotel> {
+        return hotelRepository.findAll()
+    }
 
-    fun deleteHotelById(id: UUID) : Unit = hotelRepository.deleteById(id)
+    fun deleteHotelById(id: UUID) : Unit {
+
+        getHotelById(id)
+        return hotelRepository.deleteById(id)
+    }
 
     fun addRoomTypeByHotelId(hotelId: UUID,
                     name: String,
@@ -48,7 +57,7 @@ class HotelService(
                     totalRooms: Int,
                     amenities: String?) : RoomType {
 
-        getHotelById(hotelId) ?: throw NoSuchElementException("Hotel not found")
+        getHotelById(hotelId)
 
         val newRoomType = RoomType(
             id = null,
@@ -63,7 +72,9 @@ class HotelService(
         return roomTypeRepository.save(newRoomType)
     }
 
-    fun getRoomTypesByHotelId(hotelId: UUID) : List<RoomType>? = roomTypeRepository.findByHotelId(hotelId)
+    fun getRoomTypesByHotelId(hotelId: UUID) : List<RoomType> {
+        return roomTypeRepository.findByHotelId(hotelId)
+    }
 
     fun updateRoomTypeByHotelIdAndRoomTypeId(
         hotelId: UUID,
@@ -91,6 +102,8 @@ class HotelService(
 
     fun deleteRoomTypeByHotelIdAndRoomTypeId(hotelId: UUID, roomTypeId: UUID) : Unit {
         val existingRoomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+            ?: throw NoSuchElementException("Room type not found")
+
         return roomTypeRepository.deleteById(roomTypeId)
     }
 
