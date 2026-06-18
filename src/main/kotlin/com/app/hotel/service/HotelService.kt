@@ -72,8 +72,7 @@ class HotelService(
     }
 
     fun getRoomTypesByHotelId(hotelId: UUID) : List<RoomType> {
-        return roomTypeRepository.findByHotelsId(hotelId)
-            ?: throw NoSuchElementException("No room types found for hotel: $hotelId")
+        return roomTypeRepository.findByHotelId(hotelId)
     }
 
     fun getRoomTypeByHotelIdAndRoomTypeId(hotelId: UUID, roomTypeId: UUID) : RoomType {
