@@ -2,6 +2,7 @@ package com.app.common.api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -37,5 +38,15 @@ class GlobalExceptionHandler {
 
         // 3. Return the map of errors with a clean 400 Bad Request status
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleUnreadable(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
+        val errorBody = mapOf(
+            "error" to "Bad Request",
+            "message" to "Request body is missing, or malformed"
+        )
+
+        return ResponseEntity(errorBody, HttpStatus.BAD_REQUEST)
     }
 }
