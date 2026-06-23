@@ -51,6 +51,5 @@ class InventoryService(
 
             currentDate = currentDate.plusDays(1)
         }
-
     }
 }
