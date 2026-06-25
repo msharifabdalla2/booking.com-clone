@@ -25,7 +25,9 @@ class HotelController(private val hotelService: HotelService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createHotel(@Valid @RequestBody request: CreateHotelRequest): HotelResponse {
+    fun createHotel(
+        @Valid @RequestBody request: CreateHotelRequest
+    ): HotelResponse {
 
         val createdHotel = hotelService.createHotel(
             request.name,
