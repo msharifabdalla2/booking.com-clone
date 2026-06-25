@@ -26,7 +26,7 @@ class ReservationService(
     ) : Reservation {
 
         // 1. Validate check in date is before check out date
-        if(checkInDate.isAfter(checkOutDate)) {
+        if(!checkInDate.isBefore(checkOutDate)) {
             throw IllegalArgumentException("Check in date must be before check out date")
         }
 
@@ -50,7 +50,6 @@ class ReservationService(
         if (inventoryRowsForUpdate.size != requestedNights) {
             throw IllegalStateException("Inventory not initialised for all requested nights")
         }
-
 
         // 4. Verify locked room per room type per day has space / every locked row has space between the requested dates (reserved count <= total count)
         val isAvailable = inventoryRowsForUpdate.all { row ->
