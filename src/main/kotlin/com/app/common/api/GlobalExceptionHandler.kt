@@ -49,4 +49,24 @@ class GlobalExceptionHandler {
 
         return ResponseEntity(errorBody, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
+        val errorBody = mapOf(
+            "error" to "Bad Request",
+            "message" to (ex.message ?: "An illegal argument was provided")
+        )
+
+        return ResponseEntity(errorBody, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalState(ex: IllegalStateException): ResponseEntity<Map<String, String>> {
+        val errorBody = mapOf(
+            "error" to "Bad Request",
+            "message" to (ex.message ?: "An illegal state occurred")
+        )
+
+        return ResponseEntity(errorBody, HttpStatus.CONFLICT)
+    }
 }

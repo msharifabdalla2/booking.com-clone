@@ -1,5 +1,6 @@
 package com.app.reservation.domain
 
+import com.app.reservation.domain.ReservationStatus.PENDING
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
@@ -15,7 +16,7 @@ data class Reservation(
     val roomTypeId: UUID,
     val checkInDate: LocalDate,
     val checkOutDate: LocalDate,
-    val status: ReservationStatus = ReservationStatus.PENDING,
+    val status: ReservationStatus = PENDING,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now()
 )
