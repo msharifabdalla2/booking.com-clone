@@ -13,6 +13,7 @@ data class ReservationResponse(
     val roomTypeId: UUID,
     val checkInDate: LocalDate,
     val checkOutDate: LocalDate,
+    val status: ReservationStatus,
     val createdAt: Instant,
     val updatedAt: Instant
 ) {
@@ -25,6 +26,7 @@ data class ReservationResponse(
                 roomTypeId = reservation.roomTypeId,
                 checkInDate = reservation.checkInDate,
                 checkOutDate = reservation.checkOutDate,
+                status = reservation.status,
                 createdAt = reservation.createdAt,
                 updatedAt = reservation.updatedAt
             )
