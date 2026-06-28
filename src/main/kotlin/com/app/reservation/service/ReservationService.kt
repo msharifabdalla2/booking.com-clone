@@ -1,8 +1,10 @@
 package com.app.reservation.service
 
 import com.app.reservation.domain.*
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -74,5 +76,46 @@ class ReservationService(
         )
 
         return reservationRepository.save(reservation)
+    }
+
+    fun getReservationById(reservationId: UUID): Reservation {
+
+        return reservationRepository.findByIdOrNull(reservationId)
+            ?: throw NoSuchElementException("Reservation not found: $reservationId")
+    }
+
+    @Transactional
+    fun cancelReservation(reservationId: UUID) {
+
+        // 1. Check if the reservation exists
+        val foundReservation = reservationRepository.findByIdOrNull(reservationId)
+            ?: throw NoSuchElementException("Reservation not found: $reservationId")
+
+        // 2. Check if the reservation is already cancelled
+        if (foundReservation.status == ReservationStatus.CANCELLED) {
+            throw IllegalStateException("Reservation already cancelled: $reservationId")
+        }
+
+        // 3. Lock inventory rows using custom SELECT ... FOR UPDATE query
+        val inventoryRowsForUpdate = roomTypeInventoryRepository.findInventoryForUpdate(
+            foundReservation.roomTypeId,
+            foundReservation.checkInDate,
+            foundReservation.checkOutDate
+        )
+
+        // 4. Decrement reservedCount on each row and save the changes
+        inventoryRowsForUpdate.forEach { row ->
+            val newReservedCount = (row.reservedCount - 1).coerceAtLeast(0)
+            val updatedRow = row.copy(reservedCount = newReservedCount)
+            roomTypeInventoryRepository.save(updatedRow)
+        }
+
+        // 5. Set status to CANCELLED, set updatedAt, and save reservation
+        val cancelledReservation = foundReservation.copy(
+            status = ReservationStatus.CANCELLED,
+            updatedAt = Instant.now()
+        )
+
+        reservationRepository.save(cancelledReservation)
     }
 }

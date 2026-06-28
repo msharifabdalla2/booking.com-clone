@@ -33,5 +33,21 @@ class ReservationController(private val reservationService: ReservationService) 
         return ReservationResponse.from(createdReservation)
     }
 
+    @GetMapping("/reservations/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getReservationById(@PathVariable("id") reservationId: UUID): ReservationResponse {
+
+        val foundReservation = reservationService.getReservationById(reservationId)
+
+        return ReservationResponse.from(foundReservation)
+    }
+
+    @PatchMapping("/reservations/{id}/cancel")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun cancelReservationById(@PathVariable("id") reservationId: UUID) {
+        reservationService.cancelReservation(reservationId)
+    }
+
+
 
 }
