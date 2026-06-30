@@ -47,7 +47,4 @@ class ReservationController(private val reservationService: ReservationService) 
     fun cancelReservationById(@PathVariable("id") reservationId: UUID) {
         reservationService.cancelReservation(reservationId)
     }
-
-
-
 }
