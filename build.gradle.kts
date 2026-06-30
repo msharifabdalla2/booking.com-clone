@@ -25,6 +25,7 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.auth0:java-jwt:4.4.0")
+    implementation("org.springframework.security:spring-security-crypto")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.flywaydb:flyway-core")
