@@ -4,15 +4,15 @@ import com.app.auth.api.dto.AuthResponse
 import com.app.auth.config.JwtConfig
 import com.app.auth.domain.User
 import com.app.auth.domain.UserRepository
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
-    private val passwordEncoder = BCryptPasswordEncoder()
 
     @Transactional
     fun register(
