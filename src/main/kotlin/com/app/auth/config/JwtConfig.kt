@@ -9,7 +9,7 @@ object JwtConfig {
 
     // TODO: Move to env
     private const val SECRET = ")secret"
-    private val algorithm: Algorithm = Algorithm.HMAC256(SECRET)
+    internal val algorithm: Algorithm = Algorithm.HMAC256(SECRET)
 
     const val tokenExpiryMs = 86_400_000L
 
