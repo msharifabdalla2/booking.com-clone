@@ -28,7 +28,7 @@ services:
       - custom_bridge_network
 
   elasticsearch:
-    image: elasticsearch:8.13.0
+    image: elasticsearch:9.0.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node

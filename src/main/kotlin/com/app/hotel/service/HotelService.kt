@@ -4,6 +4,7 @@ import com.app.hotel.domain.Hotel
 import com.app.hotel.domain.HotelRepository
 import com.app.hotel.domain.RoomType
 import com.app.hotel.domain.RoomTypeRepository
+import com.app.search.service.SearchService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -12,7 +13,8 @@ import java.util.UUID
 @Service
 class HotelService(
     private val hotelRepository: HotelRepository,
-    private val roomTypeRepository: RoomTypeRepository
+    private val roomTypeRepository: RoomTypeRepository,
+    private val searchService: SearchService
 ) {
     fun createHotel(name: String,
                     description: String?,
@@ -20,7 +22,7 @@ class HotelService(
                     city: String,
                     country: String,
                     latitude: BigDecimal?,
-                    longitude: BigDecimal?) : Hotel {
+                    longitude: BigDecimal?): Hotel {
         val newHotel = Hotel(
             id = null,
             name = name,
@@ -32,10 +34,12 @@ class HotelService(
             longitude = longitude
         )
 
-        return hotelRepository.save(newHotel)
+        val savedHotel = hotelRepository.save(newHotel)
+        searchService.indexHotel(savedHotel)
+        return savedHotel
     }
 
-    fun getHotelById(id: UUID) : Hotel {
+    fun getHotelById(id: UUID): Hotel {
          return hotelRepository.findByIdOrNull(id)
              ?: throw NoSuchElementException("Hotel not found: $id")
     }
