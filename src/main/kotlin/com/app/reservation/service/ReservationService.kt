@@ -1,5 +1,8 @@
 package com.app.reservation.service
 
+import com.app.hotel.domain.HotelRepository
+import com.app.notification.event.ReservationCreatedEvent
+import com.app.notification.producer.ReservationEventProducer
 import com.app.reservation.domain.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,7 +16,9 @@ import java.util.*
 class ReservationService(
     private val reservationRepository: ReservationRepository,
     private val guestRepository: GuestRepository,
-    private val roomTypeInventoryRepository: RoomTypeInventoryRepository
+    private val roomTypeInventoryRepository: RoomTypeInventoryRepository,
+    private val hotelRepository: HotelRepository,
+    private val reservationEventProducer: ReservationEventProducer
 ) {
 
     @Transactional
@@ -28,7 +33,7 @@ class ReservationService(
     ) : Reservation {
 
         // 1. Validate check in date is before check out date
-        if(!checkInDate.isBefore(checkOutDate)) {
+        if (!checkInDate.isBefore(checkOutDate)) {
             throw IllegalArgumentException("Check in date must be before check out date")
         }
 
@@ -75,7 +80,21 @@ class ReservationService(
             checkOutDate = checkOutDate,
         )
 
-        return reservationRepository.save(reservation)
+        val savedReservation = reservationRepository.save(reservation)
+
+        // 7. Publish reservation created event to Kafka
+        val hotel = hotelRepository.findByIdOrNull(hotelId)
+            ?: throw NoSuchElementException("Hotel not found: $hotelId")
+        val event = ReservationCreatedEvent(
+            reservationId = savedReservation.id!!.toString(),
+            guestEmail = guestEmail,
+            hotelName = hotel.name,
+            checkInDate = checkInDate.toString(),
+            checkOutDate = checkOutDate.toString()
+        )
+        reservationEventProducer.publishReservationCreated(event)
+
+        return savedReservation
     }
 
     fun getReservationById(reservationId: UUID): Reservation {
