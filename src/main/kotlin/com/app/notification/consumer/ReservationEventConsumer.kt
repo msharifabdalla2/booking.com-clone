@@ -10,7 +10,7 @@ class ReservationEventConsumer {
   
   private val log = LoggerFactory.getLogger(ReservationEventConsumer::class.java)
 
-  @KafkaListener(topics = ["reservation-created"], groupId = "booking-service")
+  @KafkaListener(topics = ["reservation-created"], groupId = "notification-service")
   fun consume(event: ReservationCreatedEvent) {
     log.info("Received reservation created event: $event")
   }
