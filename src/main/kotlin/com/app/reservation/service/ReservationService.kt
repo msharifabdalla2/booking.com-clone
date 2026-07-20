@@ -30,7 +30,7 @@ class ReservationService(
         guestLastName: String,
         checkInDate: LocalDate,
         checkOutDate: LocalDate
-    ) : Reservation {
+    ): Reservation {
 
         // 1. Validate check in date is before check out date
         if (!checkInDate.isBefore(checkOutDate)) {
@@ -85,6 +85,7 @@ class ReservationService(
         // 7. Publish reservation created event to Kafka
         val hotel = hotelRepository.findByIdOrNull(hotelId)
             ?: throw NoSuchElementException("Hotel not found: $hotelId")
+
         val event = ReservationCreatedEvent(
             reservationId = savedReservation.id!!.toString(),
             guestEmail = guestEmail,
