@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ReservationEventProducer(
-    private val kafkaTemplate: KafkaTemplate<String, Any>
+    private val kafkaTemplate: KafkaTemplate<String, ReservationCreatedEvent>
 ) {
     fun publishReservationCreated(event: ReservationCreatedEvent) {
         kafkaTemplate.send("reservation-created", event)
