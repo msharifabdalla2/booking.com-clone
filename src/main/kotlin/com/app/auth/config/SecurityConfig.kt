@@ -13,9 +13,10 @@ import jakarta.servlet.http.HttpServletResponse
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(
-    private val jwtFilter: JwtFilter
-) {
+class SecurityConfig() {
+
+    @Bean
+    fun jwtFilter() = JwtFilter()
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -27,7 +28,7 @@ class SecurityConfig(
                 it.requestMatchers("/api/v1/search/**").permitAll()
                 it.anyRequest().authenticated()
             }
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 
